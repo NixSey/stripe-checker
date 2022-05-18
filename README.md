@@ -1,6 +1,9 @@
 # stripe-checker
 Credit card checker using stripe payment gateway.
 
+## get checker
+go to [releases](https://github.com/J4c5/stripe-checker/releases), to download the already compiled checker or compile it yourself
+
 ## how it works
 __checker works by creating a Payment Ident right after it reads a credit card then creates a payment, if payment is approved, then refunds the amount charged (avoiding future problems with the card) and is given as: "live". If it is not approved, depending on the error code, the card is given as live, or not.__
 

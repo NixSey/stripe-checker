@@ -74,5 +74,6 @@ func init() {
 
 func main() {
 	err := app.Run(os.Args)
+
 	src.HandleError(err)
 }

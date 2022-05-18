@@ -29,5 +29,9 @@ __checker works by creating a Payment Ident right after it reads a credit card t
 - the card format should be: `card_number|card_exp_month|card_exp_year|cvc`
 - the separator: "|" can be modified, but you will have to pass the value of the separator to the tool using: `--separator` or `-s`
 
+## usage / build
+- usage: `$ ./stripe-checker cards.txt -cfg config.cfg`
+- build: `go get . && go build .`
+
 ## responsibility and terms
 > ⚠️ By using this tool you agree that the author of the tool and the tool are not to blame for misuse, this was created only for the purpose of studying carding. It must not be used for evil purposes.

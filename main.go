@@ -54,7 +54,10 @@ func init() {
 		cfg = src.LoadCfg(configPath)
 
 		src.OpenFileByName(filename, func(line string) {
-			card = src.GetCardByLine(line, separator)
+			if line != "" {
+				card = src.GetCardByLine(line, separator)
+			}
+			
 			result = src.CheckCard(card, cfg)
 
 			if result.Valid {

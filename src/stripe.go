@@ -9,6 +9,7 @@ import (
 	"github.com/Jeffail/gabs"
 	"github.com/stripe/stripe-go/v72"
 	"github.com/stripe/stripe-go/v72/paymentintent"
+	"github.com/stripe/stripe-go/v72/refund"
 )
 
 type Result struct {
@@ -20,7 +21,7 @@ var (
 	result Result
 )
 
-func CreatePi(cfg Cfg) (string, string) {
+func DefineParams() *stripe.PaymentIntentParams {
 	params := &stripe.PaymentIntentParams{
 		Amount:   stripe.Int64(cfg.Amount),
 		Currency: stripe.String(string(stripe.CurrencyEUR)),
@@ -28,6 +29,19 @@ func CreatePi(cfg Cfg) (string, string) {
 			Enabled: stripe.Bool(true),
 		},
 	}
+
+	return params
+}
+
+func RefundPi(pi string) {
+	params := &stripe.RefundParams{
+		PaymentIntent: stripe.String(pi),
+	}
+	refund.New(params)
+}
+
+func CreatePi(cfg Cfg) (string, string) {
+	params := DefineParams()
 	pi, err := paymentintent.New(params)
 	HandleError(err)
 	return pi.ClientSecret, pi.ID
@@ -78,7 +92,22 @@ func CheckCard(card Card, cfg Cfg) Result {
 		ErrorCode, ok := jsonParsed.Path("error.code").Data().(string)
 		if ok {
 			result.Code = ErrorCode
+			if ErrorCode == "incorrect-cvc" {
+				result.Valid = true
+			}
+			if ErrorCode == "insufficient-funds" {
+				result.Valid = true
+			}
+			if ErrorCode == "amount-too-large" {
+				result.Valid = true
+			}
+			if ErrorCode == "balance-insufficient" {
+				result.Valid = true
+			}
 		}
+	} else {
+		result.Valid = true
+		RefundPi(Pid)
 	}
 
 	return result

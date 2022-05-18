@@ -2,6 +2,7 @@ package src
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 )
 
@@ -23,6 +24,23 @@ func OpenFileByName(filename string, handler Handler) error {
 			continue
 		}
 		break
+	}
+	return nil
+}
+
+func SaveCard(cc Card, output string, r Result) error {
+	f, err := os.OpenFile(output, os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprintln(f, fmt.Sprintf("%s|%s|%s|%s|%s", cc.CardNumber, cc.ExpMonth, cc.ExpYear, cc.Cvv, r.Code))
+	if err != nil {
+		f.Close()
+		return err
+	}
+	err = f.Close()
+	if err != nil {
+		return err
 	}
 	return nil
 }

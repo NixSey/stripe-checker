@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"stripe-checker/src"
 
@@ -32,7 +33,7 @@ func init() {
 		&cli.StringFlag{
 			Name:        "output",
 			Aliases:     []string{"out", "o"},
-			Value:       "result.txt",
+			Value:       "./lives.txt",
 			Usage:       "output name",
 			Destination: &output,
 		},
@@ -57,10 +58,12 @@ func init() {
 			result = src.CheckCard(card, cfg)
 
 			if result.Valid {
-				src.SuccessCheckLog(card, cfg)
+				fmt.Printf("[live] %s, %s/%s, %s (%s) \n", card.CardNumber, card.ExpMonth, card.ExpYear, card.Cvv, result.Code)
+				src.SaveCard(card, output, result)
 			} else {
-				src.FailCheckLog(card, cfg, result)
+				fmt.Printf("[die] %s, %s/%s, %s (%s) \n", card.CardNumber, card.ExpMonth, card.ExpYear, card.Cvv, result.Code)
 			}
+
 		})
 		return nil
 	}

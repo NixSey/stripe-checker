@@ -45,6 +45,31 @@ func init() {
 			Destination: &separator,
 		},
 	}
+	app.Commands = []*cli.Command{
+		{
+			Name:    "once",
+			Aliases: []string{"oc", "onc"},
+			Usage:   "run only one test in line",
+			Action: func(c *cli.Context) error {
+				cfg = src.LoadCfg(configPath)
+				line := c.Args().First()
+
+				if line != "" {
+					card = src.GetCardByLine(line, separator)
+				}
+
+				result = src.CheckCard(card, cfg)
+
+				if result.Valid {
+					fmt.Printf("[live] %s, %s/%s, %s (%s) \n", card.CardNumber, card.ExpMonth, card.ExpYear, card.Cvv, result.Code)
+					src.SaveCard(card, output, result)
+				} else {
+					fmt.Printf("[die] %s, %s/%s, %s (%s) \n", card.CardNumber, card.ExpMonth, card.ExpYear, card.Cvv, result.Code)
+				}
+				return nil
+			},
+		},
+	}
 	if len(os.Args) < 2 {
 		app.RunAndExitOnError()
 		os.Exit(0)
@@ -57,7 +82,7 @@ func init() {
 			if line != "" {
 				card = src.GetCardByLine(line, separator)
 			}
-			
+
 			result = src.CheckCard(card, cfg)
 
 			if result.Valid {

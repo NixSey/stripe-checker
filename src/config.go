@@ -18,7 +18,9 @@ type Cfg struct {
 }
 
 func LoadCfg(path string) Cfg {
+	configstore.LogInfoFunc = func(format string, v ...any) {}
 	configstore.File(path)
+
 	cfg.StripeSdkKey, err = configstore.GetItemValue("stripe-private-api-key")
 	HandleError(err)
 

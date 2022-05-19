@@ -98,33 +98,30 @@ func CheckCard(card Card, cfg Cfg) Result {
 		ErrorCode, ok := jsonParsed.Path("error.code").Data().(string)
 		if ok {
 			result.Code = ErrorCode
-			if ErrorCode == "incorrect-cvc" {
-				result.Valid = true
-			}
-			if ErrorCode == "not_permitted" {
-				result.Valid = true
-			}
 			if ErrorCode == "card_declined" {
 				declined_reason, ok := jsonParsed.Path("error.decline_code").Data().(string)
 				if ok {
 					result.DeclineCodeValid = true
 					result.DeclinedReason = declined_reason
 
-					if declined_reason == "currency_not_supported" {
+					switch declined_reason {
+					case "currency_not_supported":
+						result.Valid = true
+					case "insufficient-funds":
+						result.Valid = true
+					case "amount-too-large":
+						result.Valid = true
+					case "balance-insufficient":
+						result.Valid = true
+					case "incorrect-cvc":
+						result.Valid = true
+					case "not_permitted":
 						result.Valid = true
 					}
 
 				}
 			}
-			if ErrorCode == "insufficient-funds" {
-				result.Valid = true
-			}
-			if ErrorCode == "amount-too-large" {
-				result.Valid = true
-			}
-			if ErrorCode == "balance-insufficient" {
-				result.Valid = true
-			}
+
 		}
 	} else {
 		result.Valid = true

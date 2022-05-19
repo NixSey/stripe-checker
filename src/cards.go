@@ -9,6 +9,7 @@ type Card struct {
 	Cvv        string
 }
 
+// split a string into list steps, and return in a Card structure
 func GetCardByLine(line, separator string) Card {
 	var card Card
 	PreFormattedCard := strings.Split(line, separator)

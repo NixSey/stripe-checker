@@ -6,8 +6,10 @@ import (
 	"os"
 )
 
+// handler is a callback
 type Handler func(line string)
 
+// open card lists and read optimally to handle large bytes of data from a list, using callback on each line.
 func OpenFileByName(filename string, handler Handler) error {
 	file, err := os.Open(filename)
 
@@ -28,6 +30,7 @@ func OpenFileByName(filename string, handler Handler) error {
 	return nil
 }
 
+// save live cards in an output.
 func SaveCard(cc Card, output string, r Result) error {
 	f, err := os.OpenFile(output, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {

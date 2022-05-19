@@ -21,6 +21,7 @@ var (
 	result Result
 )
 
+// set payment ident parameters
 func DefineParams() *stripe.PaymentIntentParams {
 	params := &stripe.PaymentIntentParams{
 		Amount:   stripe.Int64(cfg.Amount),
@@ -33,6 +34,7 @@ func DefineParams() *stripe.PaymentIntentParams {
 	return params
 }
 
+// refund payment using payment ident id
 func RefundPi(pi string) {
 	params := &stripe.RefundParams{
 		PaymentIntent: stripe.String(pi),
@@ -40,6 +42,7 @@ func RefundPi(pi string) {
 	refund.New(params)
 }
 
+// create a payment indent
 func CreatePi(cfg Cfg) (string, string) {
 	params := DefineParams()
 	pi, err := paymentintent.New(params)
@@ -47,6 +50,7 @@ func CreatePi(cfg Cfg) (string, string) {
 	return pi.ClientSecret, pi.ID
 }
 
+// check the cards, if live refund the amount charged, if not just ignore
 func CheckCard(card Card, cfg Cfg) Result {
 	result.Valid = false
 

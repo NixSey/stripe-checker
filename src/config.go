@@ -17,6 +17,7 @@ type Cfg struct {
 	Amount           int64
 }
 
+// load settings from a patch, then form in a Cfg format
 func LoadCfg(path string) Cfg {
 	configstore.LogInfoFunc = func(format string, v ...any) {}
 	configstore.File(path)

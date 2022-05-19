@@ -4,7 +4,7 @@ import (
 	"log"
 )
 
-// handle errors
+// simple error handling
 func HandleError(e error) {
 	if e != nil {
 		log.Fatalln(e)

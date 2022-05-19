@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"stripe-checker/src"
 
@@ -54,18 +53,12 @@ func init() {
 				cfg = src.LoadCfg(configPath)
 				line := c.Args().First()
 
-				if line != "" {
-					card = src.GetCardByLine(line, separator)
+				card, err := src.DefineCard(line, separator)
+				if err != nil {
+					return err
 				}
 
-				result = src.CheckCard(card, cfg)
-
-				if result.Valid {
-					fmt.Printf("[live] %s, %s/%s, %s (%s) \n", card.CardNumber, card.ExpMonth, card.ExpYear, card.Cvv, result.Code)
-					src.SaveCard(card, output, result)
-				} else {
-					fmt.Printf("[die] %s, %s/%s, %s (%s) \n", card.CardNumber, card.ExpMonth, card.ExpYear, card.Cvv, result.Code)
-				}
+				src.CheckProcess(card, cfg, output)
 				return nil
 			},
 		},
@@ -74,24 +67,18 @@ func init() {
 		app.RunAndExitOnError()
 		os.Exit(0)
 	}
+
 	app.Action = func(ctx *cli.Context) error {
 		filename = ctx.Args().First()
 		cfg = src.LoadCfg(configPath)
 
 		src.OpenFileByName(filename, func(line string) {
-			if line != "" {
-				card = src.GetCardByLine(line, separator)
+			card, err := src.DefineCard(line, separator)
+			if err != nil {
+				src.HandleError(err)
 			}
 
-			result = src.CheckCard(card, cfg)
-
-			if result.Valid {
-				fmt.Printf("[live] %s, %s/%s, %s (%s) \n", card.CardNumber, card.ExpMonth, card.ExpYear, card.Cvv, result.Code)
-				src.SaveCard(card, output, result)
-			} else {
-				fmt.Printf("[die] %s, %s/%s, %s (%s) \n", card.CardNumber, card.ExpMonth, card.ExpYear, card.Cvv, result.Code)
-			}
-
+			src.CheckProcess(card, cfg, output)
 		})
 		return nil
 	}

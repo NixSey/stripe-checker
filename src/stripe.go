@@ -13,8 +13,10 @@ import (
 )
 
 type Result struct {
-	Code  string
-	Valid bool
+	Code             string
+	DeclinedReason   string
+	DeclineCodeValid bool
+	Valid            bool
 }
 
 var (
@@ -53,7 +55,7 @@ func CreatePi(cfg Cfg) (string, string) {
 // check the cards, if live refund the amount charged, if not just ignore
 func CheckCard(card Card, cfg Cfg) Result {
 	result.Valid = false
-
+	result.DeclineCodeValid = false
 	stripe.Key = cfg.StripeSdkKey
 	clientSecret, Pid := CreatePi(cfg)
 
@@ -98,6 +100,21 @@ func CheckCard(card Card, cfg Cfg) Result {
 			result.Code = ErrorCode
 			if ErrorCode == "incorrect-cvc" {
 				result.Valid = true
+			}
+			if ErrorCode == "not_permitted" {
+				result.Valid = true
+			}
+			if ErrorCode == "card_declined" {
+				declined_reason, ok := jsonParsed.Path("error.decline_code").Data().(string)
+				if ok {
+					result.DeclineCodeValid = true
+					result.DeclinedReason = declined_reason
+
+					if declined_reason == "currency_not_supported" {
+						result.Valid = true
+					}
+
+				}
 			}
 			if ErrorCode == "insufficient-funds" {
 				result.Valid = true

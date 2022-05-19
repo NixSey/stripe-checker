@@ -36,7 +36,8 @@ func SaveCard(cc Card, output string, r Result) error {
 	if err != nil {
 		return err
 	}
-	_, err = fmt.Fprintln(f, fmt.Sprintf("%s|%s|%s|%s|%s", cc.CardNumber, cc.ExpMonth, cc.ExpYear, cc.Cvv, r.Code))
+	cardLine := fmt.Sprintf("%s|%s|%s|%s|%s", cc.CardNumber, cc.ExpMonth, cc.ExpYear, cc.Cvv, r.Code)
+	_, err = fmt.Fprintln(f, cardLine)
 	if err != nil {
 		f.Close()
 		return err

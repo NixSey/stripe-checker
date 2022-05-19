@@ -33,7 +33,7 @@ __checker works by creating a Payment Ident right after it reads a credit card t
 - the separator: "|" can be modified, but you will have to pass the value of the separator to the tool using: `--separator` or `-s`
 
 ## usage / build
-- usage: `$ ./stripe-checker cards.txt -cfg config.cfg`
+- usage: `$ ./stripe-checker -cfg config.cfg cards.txt `
 - build: `go get . && go build .`
 
 ## responsibility and terms

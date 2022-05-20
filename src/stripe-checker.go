@@ -2,23 +2,6 @@ package src
 
 import "fmt"
 
-type CardError struct{}
-
-func (cr *CardError) Error() string {
-	return "your card-list file contains empty lines"
-}
-
-// define a card using a line
-func DefineCard(line, separator string) (Card, error) {
-	card := GetCardByLine(line, separator)
-
-	if line == "" {
-		return card, &CardError{}
-	}
-
-	return card, nil
-}
-
 // start checking process
 func CheckProcess(card Card, cfg Cfg, output string) {
 	result = CheckCard(card, cfg)

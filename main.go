@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	app        = &cli.App{}
-	cfg        src.Cfg
-	result     src.Result
+	app = &cli.App{}
+	cfg src.Cfg
+
 	card       src.Card
 	filename   string
 	output     string
@@ -53,9 +53,8 @@ func init() {
 				cfg = src.LoadCfg(configPath)
 				line := c.Args().First()
 
-				card, err := src.DefineCard(line, separator)
-				if err != nil {
-					return err
+				if line != "" {
+					card = src.GetCardByLine(line, separator)
 				}
 
 				src.CheckProcess(card, cfg, output)
@@ -73,9 +72,8 @@ func init() {
 		cfg = src.LoadCfg(configPath)
 
 		src.OpenFileByName(filename, func(line string) {
-			card, err := src.DefineCard(line, separator)
-			if err != nil {
-				src.HandleError(err)
+			if line != "" {
+				card = src.GetCardByLine(line, separator)
 			}
 
 			src.CheckProcess(card, cfg, output)
